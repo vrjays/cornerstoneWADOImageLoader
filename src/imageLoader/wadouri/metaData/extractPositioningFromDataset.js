@@ -28,7 +28,7 @@ function extractOrientationFromNMMultiframeDataset(dataSet) {
   let imageOrientationPatient;
   const modality = dataSet.string('x00080060');
 
-  if (modality.includes('NM')) {
+  if (modality && modality.includes('NM')) {
     const imageSubType = getImageTypeSubItemFromDataset(dataSet, 2);
 
     if (imageSubType && isNMReconstructable(imageSubType)) {
@@ -54,7 +54,7 @@ function extractPositionFromNMMultiframeDataset(dataSet) {
   let imagePositionPatient;
   const modality = dataSet.string('x00080060');
 
-  if (modality.includes('NM')) {
+  if (modality && modality.includes('NM')) {
     const imageSubType = getImageTypeSubItemFromDataset(dataSet, 2);
 
     if (imageSubType && isNMReconstructable(imageSubType)) {

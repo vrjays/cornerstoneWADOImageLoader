@@ -1,6 +1,38 @@
 import external from '../../externalModules.js';
 import { getOptions } from './options.js';
 
+let xhrList = {};
+
+function xhrAbort(imageId) {
+  const _xhr = xhrList[imageId];
+  if (_xhr) {
+    _xhr.abort();
+    removeXhrRequest(imageId);
+  }
+}
+
+function xhrAbortAll() {
+  var _keys = Object.keys(xhrList);
+  if (_keys.length) {
+    _keys.forEach((imageId) => {
+      xhrAbort(imageId);
+    });
+    xhrList = {};
+  }
+}
+
+function addXhrRequest(imageId, xhr) {
+  xhrList[imageId] = xhr;
+}
+
+function getXhrRequest() {
+  return xhrList;
+}
+
+function removeXhrRequest(imageId) {
+  delete xhrList[imageId];
+}
+
 function xhrRequest(url, imageId, defaultHeaders = {}, params = {}) {
   const { cornerstone } = external;
   const options = getOptions();
@@ -101,6 +133,7 @@ function xhrRequest(url, imageId, defaultHeaders = {}, params = {}) {
       // TODO: consider sending out progress messages here as we receive
       // the pixel data
       if (xhr.readyState === 4) {
+        removeXhrRequest(imageId);
         if (xhr.status === 200) {
           options
             .beforeProcessing(xhr)
@@ -153,6 +186,7 @@ function xhrRequest(url, imageId, defaultHeaders = {}, params = {}) {
       );
     };
     xhr.onerror = function () {
+      removeXhrRequest(imageId);
       errorInterceptor(xhr);
       reject(xhr);
     };
@@ -162,6 +196,7 @@ function xhrRequest(url, imageId, defaultHeaders = {}, params = {}) {
       reject(xhr);
     };
     xhr.send();
+    addXhrRequest(imageId, xhr);
   });
 
   promise.xhr = xhr;
@@ -170,3 +205,5 @@ function xhrRequest(url, imageId, defaultHeaders = {}, params = {}) {
 }
 
 export default xhrRequest;
+
+export { xhrAbort, xhrAbortAll, addXhrRequest, getXhrRequest };
