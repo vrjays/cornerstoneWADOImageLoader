@@ -1,6 +1,6 @@
 {
   "name": "annet-cornerstone-wado-image-loader",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "private": false,
   "description": "Cornerstone Image Loader for DICOM WADO-URI and WADO-RS",
   "keywords": [
